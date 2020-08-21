@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <title>Bot Receita Upload</title>
+  </head>
+
+  <body>
+    <div
+      style="
+        width: 100%;
+        height: 10%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <h1>Bot Receita</h1>
+      <form
+        id="form"
+        method="post"
+        enctype="multipart/form-data"
+        style="margin-top: 50pt;"
+      >
+        <p style="font-size: 16pt; font-weight: 600;">
+          Carregue o arquivo csv para iniciar o processo.
+        </p>
+        <input
+          type="file"
+          name="file"
+          id="file"
+          accept=".csv"
+          style="display: block; margin-top: 10pt;"
+        />
+        <span style="display: block; margin-top: 10pt;">Email:</span>
+        <input type="text" id="email" style="display: block;" />
+        <button type="submit" style="display: block; margin-top: 10pt;">
+          Upload
+        </button>
+      </form>
+    </div>
+
+    <script>
+      const form = document.getElementById("form");
+      const file = document.getElementById("file");
+      const email = document.getElementById("email");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+
+        if (file.files.length > 0) {
+          formData.append("file", file.files[0]);
+        } else {
+          alert("Selecione um arquivo.");
+          return;
+        }
+
+        const proxyurl = "https://cors-anywhere.herokuapp.com/";
+        const url =
+          "https://southamerica-east1-bot-receita-1597683050885.cloudfunctions.net/boletos/planilha?email=" +
+          email.value;
+
+        if (email.value.trim().length > 0) {
+          fetch(proxyurl + url, {
+            method: "post",
+            body: formData,
+          })
+            .then(() => alert("Arquivo enviado."))
+            .catch((err) => {
+              console.log(err.message);
+              alert("Falha no envio, tente novamente!");
+            });
+        } else {
+          alert("Insira um email.");
+          return;
+        }
+      });
+    </script>
+  </body>
+</html>
